@@ -27,7 +27,7 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
+
 
 // Your task is to complete this implementation and return an Ok result of inner
 // type Color. You need to create an implementation for a tuple of three
@@ -41,6 +41,10 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let red = convert_type(tuple.0)?;
+        let green = convert_type(tuple.1)?;
+        let blue = convert_type(tuple.2)?;
+        return Ok(Color { red, green, blue });        
     }
 }
 
@@ -48,6 +52,10 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let red = convert_type(arr[0])?;
+        let green = convert_type(arr[1])?;
+        let blue = convert_type(arr[2])?;
+        return Ok(Color { red, green, blue });        
     }
 }
 
@@ -55,6 +63,23 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        let red = convert_type(slice[0])?;
+        let green = convert_type(slice[1])?;
+        let blue = convert_type(slice[2])?;
+
+        return Ok(Color { red, green, blue });        
+    }
+}
+
+fn convert_type(meta_color: i16) -> Result<u8, IntoColorError> {
+    let result = u8::try_from(meta_color);
+    match result {
+        Ok(c) => Ok(c),
+        _ => return Err(IntoColorError::IntConversion),
     }
 }
 
